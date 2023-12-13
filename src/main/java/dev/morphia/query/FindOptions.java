@@ -24,7 +24,9 @@ import com.mongodb.ReadPreference;
 import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.DBCollectionFindOptions;
 import com.mongodb.lang.Nullable;
+import dev.morphia.internal.PathTarget;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -219,6 +221,16 @@ public class FindOptions {
     @Nullable
     public DBObject getSort() {
         return options.getSort();
+    }
+
+    public FindOptions sort(final Sort... sorts) {
+        final DBObject sortList = new BasicDBObject();
+        for (Sort sort : sorts) {
+            String s = sort.getField();
+            sortList.put(s, sort.getOrder());
+        }
+        this.options.sort(sortList);
+        return this;
     }
 
     public FindOptions hint(final DBObject hint) {

@@ -742,10 +742,17 @@ public class QueryImpl<T> implements CriteriaContainer, Query<T> {
             LOG.warn("Sorting on tail is not allowed.");
         }
 
-        return dbColl.find(query, findOptions.getOptions()
-                                             .copy()
-                                             .sort(getSortObject())
-                                             .projection(getFieldsObject()))
+        final DBCollectionFindOptions effectiveOptions = findOptions.getOptions()
+                .copy()
+                .projection(getFieldsObject());
+
+        final DBObject sortObjectOverride = getSortObject();
+        if (sortObjectOverride != null) {
+            effectiveOptions.sort(sortObjectOverride);
+        }
+
+
+        return dbColl.find(query, effectiveOptions)
                      .setDecoderFactory(ds.getDecoderFact());
     }
 
